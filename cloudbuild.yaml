@@ -1,0 +1,35 @@
+steps:
+# Step 1: Install dependencies
+- name: 'gcr.io/cloud-builders/npm'
+  args: ['install']
+
+# Step 2: Install Python dependencies
+- name: 'gcr.io/cloud-builders/python'
+  args: ['pip', 'install', '-r', 'requirements.txt']
+
+# Step 3: Run Django migrations
+- name: 'gcr.io/cloud-builders/python'
+  args: ['python', 'manage.py', 'migrate']
+
+# Step 4: Run Django tests
+- name: 'gcr.io/cloud-builders/python'
+  args: ['python', 'manage.py', 'test']
+
+# Step 5: Collect static files
+- name: 'gcr.io/cloud-builders/python'
+  args: ['python', 'manage.py', 'collectstatic', '--noinput']
+
+# Step 6: Build and push Docker image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/YOUR_PROJECT_ID/YOUR_IMAGE_NAME:$COMMIT_SHA', '.']
+  
+# Step 7: Push the Docker image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/YOUR_PROJECT_ID/YOUR_IMAGE_NAME:$COMMIT_SHA']
+  
+# Step 8: Deploy to App Engine (adjust as needed)
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['app', 'deploy']
+
+images:
+- 'gcr.io/YOUR_PROJECT_ID/YOUR_IMAGE_NAME:$COMMIT_SHA'

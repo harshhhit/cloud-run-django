@@ -21,15 +21,12 @@ steps:
 
 # Step 6: Build and push Docker image
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/YOUR_PROJECT_ID/YOUR_IMAGE_NAME:$COMMIT_SHA', '.']
+  args: ['build', '-t', 'gcr.io/clean-mountain-395906/sonarqube:$COMMIT_SHA', '.']
   
 # Step 7: Push the Docker image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/YOUR_PROJECT_ID/YOUR_IMAGE_NAME:$COMMIT_SHA']
-  
-# Step 8: Deploy to App Engine (adjust as needed)
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['app', 'deploy']
+  args: ['push', 'gcr.io/clean-mountain-395906/sonarqube:$COMMIT_SHA']
+
 
 images:
-- 'gcr.io/YOUR_PROJECT_ID/YOUR_IMAGE_NAME:$COMMIT_SHA'
+- 'gcr.io/clean-mountain-395906/sonarqube:$COMMIT_SHA'

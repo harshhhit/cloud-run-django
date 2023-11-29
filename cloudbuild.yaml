@@ -1,32 +1,16 @@
+# cloudbuild.yaml
 steps:
-# Step 1: Install dependencies
-- name: 'gcr.io/cloud-builders/npm'
-  args: ['install']
-
-# Step 2: Install Python dependencies
-- name: 'gcr.io/cloud-builders/python'
-  args: ['pip', 'install', '-r', 'requirements.txt']
-
-# Step 3: Run Django migrations
-- name: 'gcr.io/cloud-builders/python'
-  args: ['python', 'manage.py', 'migrate']
-
-# Step 4: Run Django tests
-- name: 'gcr.io/cloud-builders/python'
-  args: ['python', 'manage.py', 'test']
-
-# Step 5: Collect static files
-- name: 'gcr.io/cloud-builders/python'
-  args: ['python', 'manage.py', 'collectstatic', '--noinput']
-
-# Step 6: Build and push Docker image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/clean-mountain-395906/sonarqube:$COMMIT_SHA', '.']
-  
-# Step 7: Push the Docker image to Container Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/clean-mountain-395906/sonarqube:$COMMIT_SHA']
-
-
-images:
-- 'gcr.io/clean-mountain-395906/sonarqube:$COMMIT_SHA'
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/clean-mountain-395906/your-django-app', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/clean-mountain-395906/your-django-app']
+  - name: 'sonarsource/sonar-scanner-cli'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        sonar-scanner
+        -Dsonar.projectKey=cleanmoutain_cleane \
+        -Dsonar.organization=cleanmoutain \
+        -Dsonar.host.url=https://sonarcloud.io
+        -Dsonar.login=$SONAR_TOKEN
